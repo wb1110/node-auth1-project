@@ -8,7 +8,12 @@ const Users = require("../users/users-model");
   }
 */
 function restricted(req, res, next) {
-  next()
+  if(req.session.user) {
+    next()
+  } else {
+    next({ status: 401, message: "You shall not pass!"})
+  }
+  
 }
 
 async function checkUsernameFree(req, res, next) {
@@ -38,6 +43,7 @@ async function checkUsernameExists(req, res, next) {
     if (!userExists.length) {
       next({ status: 401, message: "Invalid credentials" })
     } else {
+      req.user = userExists[0]
       next()
     }
   } catch (err) {
