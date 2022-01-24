@@ -33,7 +33,7 @@ const Users = require("../users/users-model")
     "message": "Password must be longer than 3 chars"
   }
  */
-router.post('/register', checkUsernameFree, checkUsernameExists, checkPasswordLength, async (req, res, next) => {
+router.post('/register', checkUsernameFree, checkPasswordLength, async (req, res, next) => {
   try {
     const { username, password } = req.body
     const hash = bcrypt.hashSync(password, 8)
@@ -60,9 +60,14 @@ router.post('/register', checkUsernameFree, checkUsernameExists, checkPasswordLe
     "message": "Invalid credentials"
   }
  */
-  router.post('/login', restricted, async (req, res, next) => {
+  router.post('/login', checkUsernameExists, async (req, res, next) => {
     try {
-      res.json('login!!!')
+      const login = await Users.findBy({ username: req.body.username, password: req.body.password})
+      if (login) {
+        res.status(200).json({ message: `Welcome ${req.body.username}!` })
+      } else {
+        next()
+      }
     } catch (err) {
       next(err)
     }

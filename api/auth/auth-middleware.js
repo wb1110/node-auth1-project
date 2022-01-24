@@ -8,18 +8,9 @@ const Users = require("../users/users-model");
   }
 */
 function restricted(req, res, next) {
-  console.log('restricted')
   next()
 }
 
-/*
-  If the username in req.body already exists in the database
-
-  status 422
-  {
-    "message": "Username taken"
-  }
-*/
 async function checkUsernameFree(req, res, next) {
   try {
   const userExists = await Users.findBy({ username: req.body.username })
@@ -41,25 +32,25 @@ async function checkUsernameFree(req, res, next) {
     "message": "Invalid credentials"
   }
 */
-function checkUsernameExists(req, res, next) {
-  console.log('exists')
-  next()
-}
-
-/*
-  If password is missing from req.body, or if it's 3 chars or shorter
-
-  status 422
-  {
-    "message": "Password must be longer than 3 chars"
+async function checkUsernameExists(req, res, next) {
+  try {
+    const userExists = await Users.findBy({ username: req.body.username })
+    if (!userExists.length) {
+      res.status(401).json({ message: "Invalid credentials" })
+    } else {
+      next()
+    }
+  } catch (err) {
+      next(err)
   }
-*/
+}
+
 function checkPasswordLength(req, res, next) {
-  console.log('pwlength')
+  !req.body.password || req.body.password.length < 4 ?
+  res.status(422).json({ message: "Password must be longer than 3 chars"}) :
   next()
 }
 
-// Don't forget to add these to the `exports` object so they can be required in other modules
 module.exports = {
   restricted,
   checkUsernameFree,
