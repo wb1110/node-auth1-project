@@ -15,7 +15,7 @@ async function checkUsernameFree(req, res, next) {
   try {
   const userExists = await Users.findBy({ username: req.body.username })
   if (userExists.length) {
-    res.status(422).json({ message: "Username taken"})
+    next({ status: 422, message: "Username taken" })
   } else {
     next()
   }
@@ -36,7 +36,7 @@ async function checkUsernameExists(req, res, next) {
   try {
     const userExists = await Users.findBy({ username: req.body.username })
     if (!userExists.length) {
-      res.status(401).json({ message: "Invalid credentials" })
+      next({ status: 401, message: "Invalid credentials" })
     } else {
       next()
     }
