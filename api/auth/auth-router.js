@@ -39,8 +39,7 @@ router.post('/register', checkUsernameFree, checkUsernameExists, checkPasswordLe
     const hash = bcrypt.hashSync(password, 8)
     const newUser = { username, password: hash }
     const inserted = await Users.add(newUser)
-    console.log(inserted.username)
-    res.json({ message: `Welcome, ${inserted.username}`})
+    res.json(inserted)
   } catch (err) {
     next(err)
   }

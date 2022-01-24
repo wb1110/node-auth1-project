@@ -10,7 +10,7 @@ function find() {
   resolves to an ARRAY with all users that match the filter condition
  */
 function findBy(filter) {
-  return db('users').where(filter)
+  return db('users').where(filter).select('username')
 }
 
 /**
@@ -19,6 +19,7 @@ function findBy(filter) {
 function findById(user_id) {
   return db('users')
   .where({ user_id })
+  .select('user_id', 'username')
   .first()
 }
 
