@@ -6,7 +6,9 @@ const {
   checkUsernameFree,
   checkUsernameExists,
   checkPasswordLength
-} = require('./auth-middleware')
+} = require('./auth-middleware');
+const bcrypt = require('bcryptjs')
+const Users = require("../users/users-model")
 
 
 /**
@@ -33,7 +35,12 @@ const {
  */
 router.post('/register', checkUsernameFree, checkUsernameExists, checkPasswordLength, async (req, res, next) => {
   try {
-    res.json('register!!!')
+    const { username, password } = req.body
+    const hash = bcrypt.hashSync(password, 8)
+    const newUser = { username, password: hash }
+    const inserted = await Users.add(newUser)
+    console.log(inserted.username)
+    res.json({ message: `Welcome, ${inserted.username}`})
   } catch (err) {
     next(err)
   }
