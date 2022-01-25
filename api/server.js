@@ -40,7 +40,6 @@ server.use(session({
     httpOnly: true,
     // sameSite: 'none'
   }
-
 }))
 server.use(helmet());
 server.use(express.json());

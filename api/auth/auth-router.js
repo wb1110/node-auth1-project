@@ -63,7 +63,6 @@ router.post('/register', checkUsernameFree, checkPasswordLength, async (req, res
   router.post('/login', checkUsernameExists, (req, res, next) => {
     const { password } = req.body
     if (bcrypt.compareSync(password, req.user.password)) {
-      res.status(200).json({ message: `Welcome ${req.body.username}!` })
       req.session.user = req.user
       res.json({ message: `Welcome ${req.user.username}` })
     } else {
@@ -86,9 +85,19 @@ router.post('/register', checkUsernameFree, checkPasswordLength, async (req, res
     "message": "no session"
   }
  */
-  router.get('/logout', restricted, async (req, res, next) => {
+  router.get('/logout', async (req, res, next) => {
     try {
-      res.json('logout!!!')
+      if (req.session.user) {
+        req.session.destroy(err => {
+          if (err) {
+            next(err)
+          } else {
+            res.json({ message: "logged out" })
+          }
+        })
+      } else {
+        next({ status: 200, message: 'no session' })
+      }
     } catch (err) {
       next(err)
     }
