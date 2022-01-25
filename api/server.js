@@ -29,7 +29,7 @@ server.use(session({
   resave: false,
   store: new Store({
     knex,
-    createtable: true,
+    createTable: true,
     clearInterval: 1000 * 60 * 10,
     tablename: 'sessions',
     sidfieldname: 'sid',
